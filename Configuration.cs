@@ -1,9 +1,9 @@
 namespace DiseaseModeling
 {
-    public struct Configuration
+    public static class Configuration
     {
-        public int Iterations { get; set; }
-        public int HealthyPeopleCount { get; set; }
-        public int SickPeopleCount { get; set; }
+        public static int Iterations { get; set; } = 100;
+        public static int HealthyPeopleCount { get; set; } = 20;
+        public static int SickPeopleCount { get; set; } = 5;
     }
 }
