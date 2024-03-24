@@ -29,7 +29,7 @@ namespace DiseaseModeling
             return contents.Remove(entity);
         }
 
-        public IEnumerator<object> GetEnumerator
+        public IEnumerator<MapElement> GetEnumerator
         {
             get
             {
