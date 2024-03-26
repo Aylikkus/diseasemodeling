@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -16,6 +17,13 @@ namespace DiseaseModeling
     {
         private Cell[,] cells;
 
+        public event EventHandler? MapChanged;
+
+        private void onCellChanged(object sender, EventArgs args)
+        {
+            MapChanged?.Invoke(sender, args);
+        }
+
         public Map(int rows, int columns)
         {
             cells = new Cell[rows, columns];
@@ -25,6 +33,7 @@ namespace DiseaseModeling
                 for (int j = 0; j < columns; j++)
                 {
                     cells[i, j] = new Cell(this, i + 1, j + 1);
+                    cells[i, j].ContentsChanged += onCellChanged;
                 }
             }
         }
@@ -35,6 +44,12 @@ namespace DiseaseModeling
             {
                 return cells[row - 1, col - 1];
             }
+        }
+
+        public IEnumerable<Cell> GetEnumerable()
+        {
+            foreach (var c in cells)
+                yield return c;
         }
 
         public Cell? GetAdjacent(Cell? cell, Direction direction)

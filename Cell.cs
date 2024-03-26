@@ -12,12 +12,15 @@ namespace DiseaseModeling
         public int Column { get; private set; }
         public Map Map { get; }
 
+        public event EventHandler? ContentsChanged;
+
 
         public bool TryAdd(MapElement entity)
         {
             if (contents.Count < Capacity)
             {
                 contents.Add(entity);
+                ContentsChanged?.Invoke(this, new EventArgs());
                 return true;
             }
 
@@ -26,15 +29,14 @@ namespace DiseaseModeling
 
         public bool TryRemove(MapElement entity)
         {
-            return contents.Remove(entity);
+            bool res = contents.Remove(entity);
+            ContentsChanged?.Invoke(this, new EventArgs());
+            return res;
         }
 
-        public IEnumerator<MapElement> GetEnumerator
+        public IEnumerable<MapElement> GetEnumerable()
         {
-            get
-            {
-                return contents.GetEnumerator();
-            }
+            return contents;
         }
 
         public Cell(Map map, int row, int col)

@@ -8,6 +8,7 @@ namespace DiseaseModeling
         private Cell? cell;
 
         public abstract char Syllable { get; }
+        public event EventHandler? CellChanged;
 
         public Cell? Cell 
         {
@@ -24,6 +25,7 @@ namespace DiseaseModeling
             if (this.cell.TryRemove(this) && cell.TryAdd(this))
             {
                 this.cell = cell;
+                CellChanged?.Invoke(this, new EventArgs());
                 return true;
             }
 

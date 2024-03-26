@@ -7,7 +7,6 @@ namespace DiseaseModeling
         public static void Main()
         {
             DataModel m = new DataModel(new Virus(), 5, 10);
-            Console.WriteLine(m);
         }
     }
 }
