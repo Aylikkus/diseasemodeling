@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -13,7 +14,7 @@ namespace DiseaseModeling
         Down,
     }
 
-    public class Map
+    public class Map : IEnumerable<Cell>
     {
         private Cell[,] cells;
 
@@ -46,32 +47,46 @@ namespace DiseaseModeling
             }
         }
 
-        public IEnumerable<Cell> GetEnumerable()
+        public IEnumerator<Cell> GetEnumerator()
         {
-            foreach (var c in cells)
-                yield return c;
+            return (cells.Clone() as Cell[,]).Cast<Cell>().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (cells.Clone() as Cell[,]).GetEnumerator();
         }
 
         public Cell? GetAdjacent(Cell? cell, Direction direction)
         {
             if (cell == null) return null;
 
-            if (cell.Row < 1 || cell.Row > cells.GetLength(0) ||
-                cell.Column < 1 || cell.Column > cells.GetLength(1)) return null;
+            Cell? res = null;
 
-            switch (direction)
+            try
             {
-                case Direction.Left:
-                    return cells[cell.Row, cell.Column - 1];
-                case Direction.Up:
-                    return cells[cell.Row - 1, cell.Column];
-                case Direction.Right:
-                    return cells[cell.Row, cell.Column + 1];
-                case Direction.Down:
-                    return cells[cell.Row + 1, cell.Column];
-            }
+                int i = cell.Row - 1;
+                int j = cell.Column - 1;
 
-            return null;
+                switch (direction)
+                {
+                    case Direction.Left:
+                        res = cells[i, j - 1];
+                        break;
+                    case Direction.Up:
+                        res = cells[i - 1, j];
+                        break;
+                    case Direction.Right:
+                        res = cells[i, j + 1];
+                        break;
+                    case Direction.Down:
+                        res = cells[i + 1, j];
+                        break;
+                }
+            }
+            catch (IndexOutOfRangeException) { }
+
+            return res;
         }
 
         public override string ToString()
@@ -83,7 +98,7 @@ namespace DiseaseModeling
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    sb.Append(cells[i, j].ToString());
+                    sb.Append(cells[i, j].ToString()  + "\t");
                 }
                 sb.AppendLine();
             }

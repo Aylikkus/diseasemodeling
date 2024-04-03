@@ -4,12 +4,20 @@ namespace DiseaseModeling
 {
     public class DataModel
     {
-        private int time;
+        private int seconds;
 
-        public IDisease Disease { get; }
+        public TimeSpan Time
+        {
+            get
+            {
+                return new TimeSpan(0, 0, seconds);
+            }
+        }
+
+        public Disease Disease { get; }
         public Map Map { get; }
 
-        public DataModel(IDisease disease, int rows, int cols)
+        public DataModel(Disease disease, int rows, int cols)
         {
             Disease = disease;
             Map = new Map(rows, cols);
@@ -19,7 +27,7 @@ namespace DiseaseModeling
                 Random random = new Random();
                 int row = random.Next(1, rows + 1);
                 int col = random.Next(1, cols + 1);
-                Map[row, col].TryAdd(new Human());
+                Human h = new Human(Map[row, col]);
             }
 
             for (int i = 0; i < Configuration.SickPeopleCount; i++)
@@ -27,10 +35,20 @@ namespace DiseaseModeling
                 Random random = new Random();
                 int row = random.Next(1, rows + 1);
                 int col = random.Next(1, cols + 1);
-                Human h = new Human();
-                h.MakeSick(disease);
-                Map[row, col].TryAdd(h);
+                Human h = new Human(Map[row, col]);
+                disease.AddInfected(h);
             }
+        }
+
+        public void Iterate()
+        {
+            foreach (Cell cell in Map)
+                foreach (MapElement elem in cell)
+                    elem.DoAction();
+
+            Disease.DoActivity();
+
+            seconds += 1;
         }
 
         public override string ToString()

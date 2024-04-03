@@ -6,7 +6,19 @@ namespace DiseaseModeling
     {
         public static void Main()
         {
-            DataModel m = new DataModel(new Virus(), 5, 10);
+            int iterations = Configuration.Iterations;
+            DataModel m = new DataModel(new Virus(), 20, 20);
+
+            for (int i = 0; i < iterations; i++)
+            {
+                Console.Clear();
+                Console.WriteLine("Итерация " + i);
+                Console.WriteLine("Количество больных " + m.Disease.InfectedCount);
+                Console.WriteLine();
+                Console.WriteLine(m);
+                Thread.Sleep(1000);
+                m.Iterate();
+            }
         }
     }
 }

@@ -2,12 +2,10 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace DiseaseModeling.Diseases
 {
-    class Virus : IDisease
+    class Virus : Disease
     {
-        public int Mortality => 50;
+        public override int Contagiousness => 50;
 
-        public int Contagiousness => 50;
-
-        public int Heaviness => 25;
+        public override int Duration => 25;
     }
 }

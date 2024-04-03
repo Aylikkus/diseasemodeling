@@ -2,11 +2,11 @@ using System.Text;
 
 namespace DiseaseModeling
 {
-    public class Cell
+    public class Cell : IEnumerable<MapElement>
     {
         private readonly List<MapElement> contents;
 
-        public const int Capacity = 3;
+        public const int Capacity = 2;
 
         public int Row { get; private set; }
         public int Column { get; private set; }
@@ -34,9 +34,15 @@ namespace DiseaseModeling
             return res;
         }
 
-        public IEnumerable<MapElement> GetEnumerable()
+        public IEnumerator<MapElement> GetEnumerator()
         {
-            return contents;
+            return contents.ToList().GetEnumerator();
+        }
+
+        
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return contents.ToList().GetEnumerator();
         }
 
         public Cell(Map map, int row, int col)

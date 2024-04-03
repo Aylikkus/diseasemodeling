@@ -5,12 +5,18 @@ namespace DiseaseModeling
 
     public abstract class MapElement
     {
-        private Cell? cell;
+        private Cell cell;
 
-        public abstract char Syllable { get; }
+        protected string syllable = "";
+
+        public string Syllable
+        {
+            get => syllable;
+            set => syllable = value;
+        }
         public event EventHandler? CellChanged;
 
-        public Cell? Cell 
+        public Cell Cell 
         {
             get
             {
@@ -20,10 +26,11 @@ namespace DiseaseModeling
 
         private bool moveTo(Cell? cell)
         {
-            if (this.cell == null || cell == null) return false;
+            if (cell == null) return false;
 
-            if (this.cell.TryRemove(this) && cell.TryAdd(this))
+            if (cell.TryAdd(this))
             {
+                this.cell.TryRemove(this);
                 this.cell = cell;
                 CellChanged?.Invoke(this, new EventArgs());
                 return true;
@@ -37,7 +44,17 @@ namespace DiseaseModeling
             return moveTo(cell?.Map.GetAdjacent(cell, direction));
         }
 
-        public MapElement() { }
+        public abstract void DoAction();
+
+        private MapElement() { }
+
+        public MapElement(Cell cell)
+        {
+            if (cell.TryAdd(this) == false)
+                throw new ArgumentException("Cell is full");
+
+            this.cell = cell;
+        }
 
         public override string ToString()
         {
