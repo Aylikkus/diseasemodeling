@@ -1,8 +1,7 @@
 using System.Collections;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Text;
+using DiseaseModeling.MapElements;
 
 namespace DiseaseModeling
 {
@@ -87,6 +86,20 @@ namespace DiseaseModeling
             catch (IndexOutOfRangeException) { }
 
             return res;
+        }
+
+        public int CountType(Type type)
+        {
+            int count = 0;
+            foreach (var c in cells)
+                foreach (var el in c)
+                {
+                    Type t = el.GetType();
+                    if (type == t || type.IsSubclassOf(t))
+                        count++;
+                }
+
+            return count;
         }
 
         public override string ToString()

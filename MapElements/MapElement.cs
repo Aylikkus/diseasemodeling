@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
+using System.Text;
 
-namespace DiseaseModeling
+namespace DiseaseModeling.MapElements
 {
 
     public abstract class MapElement
@@ -8,11 +9,12 @@ namespace DiseaseModeling
         private Cell cell;
 
         protected string syllable = "";
+        protected HashSet<string> modifiers = new HashSet<string>(2);
 
         public string Syllable
         {
             get => syllable;
-            set => syllable = value;
+            private set => syllable = value;
         }
         public event EventHandler? CellChanged;
 
@@ -44,6 +46,16 @@ namespace DiseaseModeling
             return moveTo(cell?.Map.GetAdjacent(cell, direction));
         }
 
+        public bool AddModifier(string mod)
+        {
+            return modifiers.Add(mod);
+        }
+
+        public bool RemoveModifier(string mod)
+        {
+            return modifiers.Remove(mod);
+        }
+
         public abstract void DoAction();
 
         private MapElement() { }
@@ -58,7 +70,17 @@ namespace DiseaseModeling
 
         public override string ToString()
         {
-            return "(" + Syllable + ")";
+            StringBuilder sb = new StringBuilder();
+            sb.Append('(');
+            if (modifiers.Count > 0)
+            {
+                foreach (var s in modifiers)
+                    sb.Append(s + ',');
+                sb.Remove(sb.Length - 1, 1);
+                sb.Append(':');
+            }
+            sb.Append(Syllable + ")");
+            return sb.ToString();
         }
     }
 }

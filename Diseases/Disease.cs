@@ -1,3 +1,5 @@
+using DiseaseModeling.MapElements;
+
 namespace DiseaseModeling.Diseases
 {
     public abstract class Disease
@@ -12,8 +14,32 @@ namespace DiseaseModeling.Diseases
         /// </summary>
         public abstract int Duration { get; }
 
-        private Dictionary<MapElement, int> infected = new Dictionary<MapElement, int>();
+        /// <summary>
+        /// Смертность
+        /// </summary>
+        public abstract int Mortality { get; }
 
+        protected Dictionary<MapElement, int> infected = new Dictionary<MapElement, int>();
+        protected HashSet<MapElement> victims = new HashSet<MapElement>();
+
+        /// <summary>
+        /// Делает "бросок кубика", результат
+        /// с процента от 0 до 100;
+        /// </summary>
+        protected bool roll(int percent)
+        {
+            percent = percent > 100 ? 100 : percent;
+            percent = percent < 0 ? 0 : percent;
+
+            Random rand = new Random();
+            int roll = rand.Next(1, 101);
+
+            return roll <= percent;
+        }
+
+        /// <summary>
+        /// Количество заразившихся данной болезнью
+        /// </summary>
         public int InfectedCount
         {
             get
@@ -22,43 +48,73 @@ namespace DiseaseModeling.Diseases
             }
         }
 
+        /// <summary>
+        /// Количество умерших от данной болезни
+        /// </summary>
+        public int VictimsCount
+        {
+            get
+            {
+                return victims.Count;
+            }
+        }
+
+        /// <summary>
+        /// Добавить (заразить) объект
+        /// </summary>
         public bool AddInfected(MapElement element)
         {
             if (infected.ContainsKey(element) == false)
             {
                 infected[element] = 0;
-                element.Syllable = "i:" + element.Syllable;
+                element.AddModifier("i");
                 return true;
             }
 
             return false;
         }
 
+        /// <summary>
+        /// Убрать (вылечить) инфицируемый объект
+        /// </summary>
         public void RemoveInfected(MapElement element)
         {
+            // Убираем инфицируемого из списка 
+            // и убираем модификатор
             infected.Remove(element);
-            element.Syllable = element.Syllable.Replace("i:", "");
+            element.RemoveModifier("i");
         }
 
-        public void DoActivity()
+        /// <summary>
+        /// Выполнить какую-то активность, характерную для болезни
+        /// </summary>
+        public virtual void DoActivity()
         {
-            Random random = new Random();
-
+            // Проходимся по каждому инфицированному
             foreach (var kv in infected.ToDictionary())
             {
                 MapElement element = kv.Key;
-                int timeOfLife = kv.Value;
 
-                infected[element]++;
+                // Увеличиваем возраст болезни
+                int timeOfLife = ++infected[element];
 
+                // Если истёк срок жизни болезни
                 if (timeOfLife > Duration)
                 {
                     RemoveInfected(element);
                     continue;
                 }
 
-                if (Contagiousness == 0)
-                    continue;
+                // Попытка убить инфицируемого
+                if (element is IMortal mortal && 
+                    mortal.IsDead == false)
+                {
+                    if (roll(Mortality))
+                    {
+                        mortal.Kill();
+                        victims.Add(element);
+                    }
+                }
 
                 Cell? c = element.Cell;
 
@@ -66,13 +122,14 @@ namespace DiseaseModeling.Diseases
                 {
                     Map map = c.Map;
 
+                    // Заражение клетки, в которой стоит элемент
                     foreach (var cellElem in c)
                     {
-                        int roll = random.Next(0, 25);
-                        if (roll * 100 / Contagiousness < Contagiousness % 100)
+                        if (roll(Contagiousness))
                             AddInfected(cellElem);
                     }
 
+                    // Заражение соседних клеток с элементом
                     Cell?[] adjacents =
                     [
                         map.GetAdjacent(c, Direction.Left),
@@ -86,8 +143,7 @@ namespace DiseaseModeling.Diseases
                         if (adjCell is not null)
                             foreach (var cellElem in adjCell)
                             {
-                                int roll = random.Next(0, 4);
-                                if (roll * 100 / Contagiousness < Contagiousness % 100)
+                                if (roll(Contagiousness / 4))
                                     AddInfected(cellElem);
                             }
                     }

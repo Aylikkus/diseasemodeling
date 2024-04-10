@@ -1,4 +1,5 @@
 using System.Text;
+using DiseaseModeling.MapElements;
 
 namespace DiseaseModeling
 {
@@ -6,14 +7,13 @@ namespace DiseaseModeling
     {
         private readonly List<MapElement> contents;
 
-        public const int Capacity = 2;
+        public const int Capacity = 3;
 
         public int Row { get; private set; }
         public int Column { get; private set; }
         public Map Map { get; }
 
         public event EventHandler? ContentsChanged;
-
 
         public bool TryAdd(MapElement entity)
         {

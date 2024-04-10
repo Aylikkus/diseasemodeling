@@ -1,4 +1,5 @@
 using DiseaseModeling.Diseases;
+using DiseaseModeling.MapElements;
 
 namespace DiseaseModeling
 {
@@ -50,6 +51,8 @@ namespace DiseaseModeling
 
             seconds += 1;
         }
+
+        
 
         public override string ToString()
         {

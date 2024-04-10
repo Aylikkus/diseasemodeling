@@ -1,11 +1,21 @@
 using DiseaseModeling.Diseases;
 
-namespace DiseaseModeling
+namespace DiseaseModeling.MapElements
 {
-    public class Human : MapElement
+    public class Human : MapElement, IMortal
     {
-        protected void doMove()
+        public bool IsDead { get; private set; }
+        public bool Vaccinated { get; private set; }
+
+        protected void vaccinate()
         {
+            Vaccinated = true;
+        }
+
+        private void doMove()
+        {
+            if (IsDead) return;
+
             Random random = new Random();
 
             int roll = random.Next(0, 10);
@@ -37,9 +47,17 @@ namespace DiseaseModeling
             doMove();
         }
 
+        public bool Kill()
+        {
+            IsDead = true;
+            AddModifier("d");
+            return true;
+        }
+
         public Human(Cell cell) : base(cell)
         {
             syllable = "h";
+            IsDead = false;
         }
     }
 }
