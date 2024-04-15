@@ -7,9 +7,16 @@ namespace DiseaseModeling.MapElements
         public bool IsDead { get; private set; }
         public bool Vaccinated { get; private set; }
 
-        protected void vaccinate()
+        public void Vaccinate()
         {
-            Vaccinated = true;
+            Random rand = new Random();
+
+            // Человек может не захотеть вакцинироваться
+            if (Vaccinated == false && rand.Next(0, 2) == 0)
+            {
+                Vaccinated = true;
+                AddModifier("v");
+            }
         }
 
         private void doMove()

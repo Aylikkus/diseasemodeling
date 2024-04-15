@@ -9,5 +9,7 @@ namespace DiseaseModeling.Diseases
         public override int Duration => 30;
 
         public override int Mortality => 2;
+
+        public override string RussianName => "Вирус";
     }
 }

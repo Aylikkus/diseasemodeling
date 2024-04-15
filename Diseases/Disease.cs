@@ -19,6 +19,11 @@ namespace DiseaseModeling.Diseases
         /// </summary>
         public abstract int Mortality { get; }
 
+        /// <summary>
+        /// Название на русском
+        /// </summary>
+        public abstract string RussianName { get; }
+
         protected Dictionary<MapElement, int> infected = new Dictionary<MapElement, int>();
         protected HashSet<MapElement> victims = new HashSet<MapElement>();
 
@@ -64,6 +69,15 @@ namespace DiseaseModeling.Diseases
         /// </summary>
         public bool AddInfected(MapElement element)
         {
+            // Заразить вакцинированного сложнее
+            if (element is Human human && human.Vaccinated)
+            {
+                Random rand = new Random();
+
+                if (rand.Next(0, 2) == 0)
+                    return false;
+            }
+
             if (infected.ContainsKey(element) == false)
             {
                 infected[element] = 0;
@@ -149,6 +163,11 @@ namespace DiseaseModeling.Diseases
                     }
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return RussianName;
         }
     }
 }

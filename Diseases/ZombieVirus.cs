@@ -11,6 +11,8 @@ namespace DiseaseModeling.Diseases
 
         public override int Mortality => 20;
 
+        public override string RussianName => "Зомби-вирус";
+
         public override void DoActivity()
         {
             base.DoActivity();

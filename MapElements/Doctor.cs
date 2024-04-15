@@ -9,7 +9,7 @@ namespace DiseaseModeling.MapElements
             foreach (var el in Cell)
             {
                 if (el is Human human)
-                    human.va
+                    human.Vaccinate();
             }
         }
 

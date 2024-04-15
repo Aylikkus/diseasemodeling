@@ -39,6 +39,15 @@ namespace DiseaseModeling
                 Human h = new Human(Map[row, col]);
                 disease.AddInfected(h);
             }
+
+            for (int i = 0; i < Configuration.DoctorsCount; i++)
+            {
+                Random random = new Random();
+                int row = random.Next(1, rows + 1);
+                int col = random.Next(1, cols + 1);
+                Doctor d = new Doctor(Map[row, col]);
+                disease.AddInfected(d);
+            }
         }
 
         public void Iterate()
@@ -49,7 +58,7 @@ namespace DiseaseModeling
 
             Disease.DoActivity();
 
-            seconds += 1;
+            seconds += 3600;
         }
 
         

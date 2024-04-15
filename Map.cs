@@ -95,7 +95,7 @@ namespace DiseaseModeling
                 foreach (var el in c)
                 {
                     Type t = el.GetType();
-                    if (type == t || type.IsSubclassOf(t))
+                    if (type == t)
                         count++;
                 }
 
